@@ -602,6 +602,7 @@ async def streamable_http_client(
     url: str,
     *,
     http_client: httpx.AsyncClient | None = None,
+    enable_get_stream: bool = True,
     terminate_on_close: bool = True,
 ) -> AsyncGenerator[
     tuple[
@@ -654,7 +655,8 @@ async def streamable_http_client(
                     await stack.enter_async_context(client)
 
                 def start_get_stream() -> None:
-                    tg.start_soon(transport.handle_get_stream, client, read_stream_writer)
+                    if enable_get_stream:
+                        tg.start_soon(transport.handle_get_stream, client, read_stream_writer)
 
                 tg.start_soon(
                     transport.post_writer,
@@ -687,6 +689,7 @@ async def streamablehttp_client(
     url: str,
     headers: dict[str, str] | None = None,
     timeout: float | timedelta = 30,
+    enable_get_stream: bool = True,
     sse_read_timeout: float | timedelta = 60 * 5,
     terminate_on_close: bool = True,
     httpx_client_factory: McpHttpClientFactory = create_mcp_http_client,
@@ -717,6 +720,7 @@ async def streamablehttp_client(
         async with streamable_http_client(
             url,
             http_client=client,
+            enable_get_stream=enable_get_stream,
             terminate_on_close=terminate_on_close,
         ) as streams:
             yield streams
