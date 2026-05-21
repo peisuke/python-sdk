@@ -1,6 +1,10 @@
 [project]
 name = "mcp"
-dynamic = ["version"]
+# Static version for fork distribution via uv git source (uv git resolver does
+# not evaluate dynamic versions during metadata extraction, breaking dependents
+# that require mcp>=0.1.0). Upstream uses `dynamic = ["version"]` with
+# uv-dynamic-versioning; we pin statically on this fork.
+version = "2.0.0"
 description = "Model Context Protocol SDK"
 readme = "README.md"
 requires-python = ">=3.10"
